@@ -1,0 +1,5 @@
+transformers
+torch # o tensorflow, a seconda delle tue preferenze per il backend
+pandas
+scikit-learn
+huggingface_hub
