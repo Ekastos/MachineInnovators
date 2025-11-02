@@ -1,19 +1,27 @@
-name: Sync to Hugging Face hub
+Ecco il blocco di codice completo e corretto che puoi copiare e incollare nel tuo file:
+
+```yaml
+# .github/workflows/sync_to_hf_space.yml
+
+name: Sync to Hugging Face Space
+
 on:
   push:
-    branches: [main]
-  # to run this workflow manually from the Actions tab
-  workflow_dispatch:
+    branches:
+      - main
 
 jobs:
   sync-to-hub:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - name: Checkout repository
+        uses: actions/checkout@v3
         with:
           fetch-depth: 0
-          lfs: true
-      - name: Push to hub
+
+      - name: Push to Hugging Face Hub
         env:
-          HF_TOKEN: ${{ secrets.HF_TOKEN }}
-        run: git push https://LorenzoIVF:$HF_TOKEN@huggingface.co/spaces/LorenzoIVF/Sentiment-Analyzer-MachineInnovators main
+          # Usa il nome del secret che hai creato nelle impostazioni di GitHub
+          HF_TOKEN: ${{ secrets.HUGGING_FACE_TOKEN }}
+        run: |
+          git push https://LorenzoIVF:$HF_TOKEN@huggingface.co/spaces/LorenzoIVF/Sentiment-Analyzer-MachineInnovators main --force
