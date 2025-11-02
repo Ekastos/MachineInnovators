@@ -6,13 +6,13 @@ from src.model import load_sentiment_pipeline
 
 def test_pipeline_loading():
     """Verifica che la pipeline si carichi senza errori."""
-    pipeline = load_sentiment_pipeline()
+    pipeline = load_sentiment_pipeline(device="cpu")
     assert pipeline is not None
 
 
 def test_pipeline_prediction():
     """Verifica che la pipeline produca una predizione nel formato atteso."""
-    pipeline = load_sentiment_pipeline()
+    pipeline = load_sentiment_pipeline(device="cpu")
     text = "This is a great product!"
     result = pipeline(text)
 
