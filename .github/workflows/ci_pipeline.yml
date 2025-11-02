@@ -1,0 +1,39 @@
+# .github/workflows/ci_pipeline.yml
+
+name: CI Pipeline - Python Tests
+
+# Trigger: esegui questo workflow ad ogni push o pull request sul branch 'main'
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+# Definisce i job da eseguire
+jobs:
+  build:
+    # Specifica il sistema operativo su cui eseguire il job
+    runs-on: ubuntu-latest
+
+    steps:
+    # Step 1: Fa il checkout del tuo codice dal repository
+    - name: Checkout repository
+      uses: actions/checkout@v3
+
+    # Step 2: Configura un ambiente Python
+    - name: Set up Python 3.11
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.11'
+
+    # Step 3: Installa le dipendenze del progetto
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -r requirements.txt
+
+    # Step 4: Esegui i test con pytest
+    # Il workflow fallirà se i test non passano
+    - name: Run tests with pytest
+      run: |
+        pytest

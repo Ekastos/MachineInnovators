@@ -1,5 +1,9 @@
 transformers
-torch # o tensorflow, a seconda delle tue preferenze per il backend
-pandas
+datasets
 scikit-learn
-huggingface_hub
+torch
+pandas
+numpy
+matplotlib
+seaborn
+pytest  
