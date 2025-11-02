@@ -1,6 +1,3 @@
-Ecco il blocco di codice completo e corretto che puoi copiare e incollare nel tuo file:
-
-```yaml
 # .github/workflows/sync_to_hf_space.yml
 
 name: Sync to Hugging Face Space
