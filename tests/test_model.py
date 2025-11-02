@@ -2,7 +2,7 @@
 
 import pytest
 from src.model import load_sentiment_pipeline
-
+from src.config import LABELS
 
 def test_pipeline_loading():
     """Verifica che la pipeline si carichi senza errori."""
@@ -21,4 +21,4 @@ def test_pipeline_prediction():
     assert len(result) == 1
     assert 'label' in result[0]
     assert 'score' in result[0]
-    assert result[0]['label'].lower() in ['negativo', 'neutro', 'positivo']
+    assert result[0]['label'].lower() in LABELS
