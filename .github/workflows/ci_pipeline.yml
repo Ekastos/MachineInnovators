@@ -36,4 +36,4 @@ jobs:
     # Il workflow fallirà se i test non passano
     - name: Run tests with pytest
       run: |
-        pytest
+        PYTHONPATH=. pytest
