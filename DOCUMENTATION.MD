@@ -32,6 +32,10 @@ L'automazione è gestita tramite **GitHub Actions**, scelta per la sua integrazi
 *   **CD (Continuous Deployment):** Sincronizzazione automatica del codice con l'ambiente di produzione su **Hugging Face Spaces**.
 *   **Scheduled Monitoring:** Utilizzo di CRON jobs per l'esecuzione periodica di script di monitoraggio.
 
+> **Nota Metodologica:** Attualmente, il workflow automatizzato su GitHub Actions esegue i test sul **modello base** presente nel repository.
+> Poiché il modello *fine-tuned* (generato localmente) non viene caricato su GitHub per limiti di storage (Git LFS), la pipeline CI non vi ha accesso diretto.
+> In uno scenario di produzione Enterprise, questo limite verrebbe superato integrando un **Model Registry** esterno (es. AWS S3, MLflow o Hugging Face Hub) da cui la pipeline scaricherebbe automaticamente l'ultima versione del modello retrainato prima di eseguire il monitoraggio.
+
 ---
 
 ## 3. Dettagli Implementativi
