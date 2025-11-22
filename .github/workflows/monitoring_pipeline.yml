@@ -1,0 +1,40 @@
+# .github/workflows/monitoring_pipeline.yml
+
+name: Continuous Monitoring System
+
+# Questo workflow viene eseguito:
+# 1. Ogni giorno alle 8:00 AM (Schedule CRON)
+# 2. Manualmente se clicchi "Run workflow" su GitHub (workflow_dispatch)
+on:
+  schedule:
+    - cron: '0 8 * * *'
+  workflow_dispatch:
+
+jobs:
+  monitor-performance:
+    runs-on: ubuntu-latest
+
+    steps:
+    # 1. Scarica il codice
+    - name: Checkout repository
+      uses: actions/checkout@v3
+
+    # 2. Prepara Python
+    - name: Set up Python 3.11
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.11'
+
+    # 3. Installa le dipendenze
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -r requirements.txt
+
+    # 4. Esegue lo script di monitoraggio
+    # Questo script (src/monitor.py) simula il controllo su nuovi dati.
+    # Se l'accuratezza è sotto la soglia, lo script stampa un ALERT nei log.
+    - name: Run Model Monitoring
+      run: |
+        export PYTHONPATH=$PYTHONPATH:.
+        python src/monitor.py
