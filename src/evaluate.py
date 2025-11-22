@@ -19,7 +19,6 @@ def evaluate_model(sentiment_pipeline, dataset, sample_size=1000):
     # Estrai i testi e le etichette reali
     true_labels_ids = test_sample['label']
 
-    # --- MODIFICA CHIAVE QUI ---
     # Convertiamo esplicitamente l'output in una lista di stringhe
     texts = list(test_sample['text'])
     # ---------------------------
@@ -43,14 +42,3 @@ def evaluate_model(sentiment_pipeline, dataset, sample_size=1000):
         predicted_labels_ids,
         target_names=config.LABELS
     ))
-
-    # Genera e visualizza la matrice di confusione
-    cm = confusion_matrix(true_labels_ids, predicted_labels_ids)
-    plt.figure(figsize=(8, 6))
-    sns.heatmap(cm, annot=True, fmt='d', cmap='Blues', xticklabels=config.LABELS, yticklabels=config.LABELS)
-    plt.title('Matrice di Confusione')
-    plt.ylabel('Etichetta Reale')
-    plt.xlabel('Etichetta Predetta')
-    print("Visualizzazione della matrice di confusione...")
-    plt.show()
-    print("--- Fine del Report ---")
