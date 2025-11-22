@@ -95,7 +95,8 @@ def run_retraining():
     # 4. Configurazione Training
     training_args = TrainingArguments(
         output_dir="./training_output",
-        num_train_epochs=3,
+        learning_rate=1e-5, # Molto basso per non sconvolgere i pesi
+        num_train_epochs=1,
         per_device_train_batch_size=4,
         per_device_eval_batch_size=4,
         eval_strategy="epoch",
