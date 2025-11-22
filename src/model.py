@@ -4,20 +4,23 @@ from transformers import pipeline
 from src import config
 
 
-def load_sentiment_pipeline(device):
+def load_sentiment_pipeline(device, model_name=None):
     """
-    Carica la pipeline di sentiment analysis pre-addestrata sul dispositivo specificato.
+    Carica la pipeline di sentiment analysis.
 
     Args:
-        device (str): Il dispositivo su cui caricare il modello ('mps', 'cpu', ecc.).
+        device (str): Il dispositivo su cui caricare il modello ('mps', 'cpu', 'cuda').
+        model_name (str, optional): Il percorso o nome del modello da caricare.
+                                    Se None, usa il modello base definito in config.
     """
-    print(f"Caricamento del modello '{config.MODEL_NAME}' sul dispositivo '{device}'...")
+    # Se non viene specificato un modello, usiamo quello di default (base)
+    target_model = model_name if model_name else config.MODEL_NAME
 
-    # Passiamo il dispositivo alla pipeline.
-    # Transformers gestirà lo spostamento del modello sulla GPU per noi.
+    print(f"Caricamento del modello: '{target_model}' sul dispositivo '{device}'...")
+
     sentiment_pipeline = pipeline(
         "sentiment-analysis",
-        model=config.MODEL_NAME,
+        model=target_model,
         device=device
     )
 

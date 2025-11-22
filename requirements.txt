@@ -8,3 +8,4 @@ matplotlib
 seaborn
 pytest
 gradio
+accelerate
