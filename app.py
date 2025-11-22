@@ -1,83 +1,57 @@
-# app.py
-
 import gradio as gr
-import torch
-from src.model import load_sentiment_pipeline
+import csv
+import os
+from datetime import datetime
 
-# --- Logica per il caricamento del modello ---
+# Il file dove salveremo i dati etichettati a mano
+LOG_FILE = "human_labeled_data.csv"
 
-print("Avvio dell'applicazione Gradio...")
+# Le etichette possibili
+LABELS = ["negative", "neutral", "positive"]
 
-
-def get_device():
-    """Controlla e restituisce il dispositivo disponibile ottimale."""
-    if torch.backends.mps.is_available():
-        return "mps"
-    # Aggiungiamo il controllo per CUDA per completezza, sebbene non usato su Mac
-    elif torch.cuda.is_available():
-        return "cuda:0"
-    return "cpu"
-
-
-# Carichiamo il modello una sola volta all'avvio dell'app
-# Questo è molto più efficiente che caricarlo ad ogni predizione.
-device = get_device()
-print(f"Utilizzo del dispositivo: {device}")
-sentiment_pipeline = load_sentiment_pipeline(device=device)
-
-print("Modello caricato. L'applicazione è pronta.")
+# Inizializza il file CSV con l'header se non esiste
+if not os.path.exists(LOG_FILE):
+    with open(LOG_FILE, "w", newline="", encoding='utf-8') as f:
+        writer = csv.writer(f)
+        writer.writerow(["timestamp", "text", "human_label"])
 
 
-# --- Funzione per l'interfaccia ---
-
-def predict_sentiment(text):
+def save_label(text, label):
     """
-    Esegue la predizione del sentiment sul testo in input
-    e formatta l'output per Gradio.
+    Questa funzione non usa un modello AI.
+    Scrive semplicemente l'input e l'etichetta fornita dall'utente nel CSV.
     """
-    if not text:
-        return {}  # Restituisce un dizionario vuoto se non c'è testo
+    if not text or not label:
+        return "Errore: Testo ed etichetta non possono essere vuoti."
 
-    # La pipeline restituisce una lista con un dizionario, es: [{'label': 'positive', 'score': 0.99}]
-    result = sentiment_pipeline(text)[0]
+    timestamp = datetime.now().isoformat()
 
-    # Formattiamo l'output come un dizionario di {etichetta: punteggio}
-    # Questo è il formato che l'componente "Label" di Gradio si aspetta.
-    label = result['label'].capitalize()
-    score = result['score']
+    with open(LOG_FILE, "a", newline="", encoding='utf-8') as f:
+        writer = csv.writer(f)
+        writer.writerow([timestamp, text, label])
 
-    return {label: score}
+    # Restituisce un messaggio di conferma e pulisce gli input per il prossimo campione
+    return f"Campione salvato con successo!", "", None
 
 
-# --- Costruzione dell'interfaccia Gradio ---
+with gr.Blocks() as demo:
+    gr.Markdown("# Strumento di Annotazione Dati per Sentiment Analysis")
+    gr.Markdown("Inserisci un testo, seleziona l'etichetta di sentiment corretta e clicca 'Salva Etichetta'.")
 
-# Usiamo il tema di default di Gradio
-theme = gr.themes.Default()
+    text_input = gr.Textbox(lines=5, label="Testo da etichettare")
+    label_input = gr.Radio(choices=LABELS, label="Seleziona il Sentiment Corretto")
 
-# Descrizione per l'interfaccia
-title = "Analisi del Sentiment per MachineInnovators Inc."
-description = """
-Questo strumento analizza il sentiment di un testo (in inglese) relativo ai social media,
-classificandolo come Negative, Neutral, o Positive.
-Il modello utilizzato è `cardiffnlp/twitter-roberta-base-sentiment-latest`.
-Inserisci un testo e clicca su "Submit" per vedere il risultato.
-"""
+    save_button = gr.Button("Salva Etichetta")
 
-# Creiamo l'interfaccia
-iface = gr.Interface(
-    fn=predict_sentiment,
-    inputs=gr.Textbox(lines=5, placeholder="Scrivi qui il tuo testo..."),
-    outputs=gr.Label(num_top_classes=3, label="Risultato del Sentiment"),
-    title=title,
-    description=description,
-    examples=[
-        ["MachineInnovators Inc. is revolutionizing the AI industry!"],
-        ["The new update is okay, but it could be better."],
-        ["I am very disappointed with their customer service."]
-    ],
-    theme=theme
-)
+    confirmation_output = gr.Label(label="Stato")
 
-# Avviamo l'applicazione
+    # Quando il bottone viene cliccato, chiama la funzione save_label
+    save_button.click(
+        fn=save_label,
+        inputs=[text_input, label_input],
+        # L'output va al messaggio di conferma e pulisce i campi di input
+        outputs=[confirmation_output, text_input, label_input]
+    )
+
 if __name__ == "__main__":
-    iface.launch()
+    demo.launch()
