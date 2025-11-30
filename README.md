@@ -62,7 +62,6 @@ Per replicare l'ambiente e testare le funzionalità di retraining:
 2.  **Installare le dipendenze:**
     ```bash
     pip install -r requirements.txt
-    pip install accelerate
     ```
 
 3.  **Eseguire l'App (Interfaccia Web):**
